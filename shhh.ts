@@ -23,7 +23,7 @@ const password_list: Array<string> = [
   "063016UR",
   "417017AR",
   "053018BH",
-  "052019UH",/home/akshat
+  "052019UH",
   "035005IS",
   "087006EH",
   "411007NU",
