@@ -3,6 +3,7 @@ const password_known = "052019UH";
 
 const username_to_find = "19102156";
 
+// TODO: Currently we use an array to store all the password. Use a TOML/JSON file to do this.
 const password_list: Array<string> = [
   "157030AR",
   "216031IM",
@@ -57,7 +58,7 @@ const password_list: Array<string> = [
 console.log("LogIn Known: " + username_known + " : " + password_known + "\n");
 let p1 = Deno.run({
   args: [
-    "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+    "./sophos-cli",
     username_known,
     password_known,
     "login"
@@ -72,7 +73,7 @@ console.log(
 console.log("LogOut Known " + username_known + " : " + password_known + "\n");
 let p2 = Deno.run({
   args: [
-    "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+    "./sophos-cli",
     username_known,
     password_known,
     "logout"
@@ -89,10 +90,12 @@ let k = 0;
 
 while (k < password_list.length) {
   if ((k + 1) % 5 == 0) {
-    console.log("LogIn Known: " + username_known + " : " + password_known + "\n");
+    console.log(
+      "LogIn Known: " + username_known + " : " + password_known + "\n"
+    );
     let p1 = Deno.run({
       args: [
-        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        "./sophos-cli",
         username_known,
         password_known,
         "login"
@@ -104,10 +107,12 @@ while (k < password_list.length) {
       "***********************************************************************"
     );
 
-    console.log("LogOut Known " + username_known + " : " + password_known + "\n");
+    console.log(
+      "LogOut Known " + username_known + " : " + password_known + "\n"
+    );
     let p2 = Deno.run({
       args: [
-        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        "./sophos-cli",
         username_known,
         password_known,
         "logout"
@@ -120,10 +125,12 @@ while (k < password_list.length) {
     );
     k++;
   } else {
-    console.log("Trying Unknown " + username_to_find + " : " + password_list[i] + "\n");
+    console.log(
+      "Trying Unknown " + username_to_find + " : " + password_list[i] + "\n"
+    );
     let p = Deno.run({
       args: [
-        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        "./sophos-cli",
         username_to_find,
         password_list[i],
         "login"
