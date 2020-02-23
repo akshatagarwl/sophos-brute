@@ -1,8 +1,8 @@
-const username_known = "9919103015";
-const password_known = "052019UH";
+const username_known = "<YOUR_KNOWN_USERNAME>";
+const password_known = "<YOUR_KNOWN_PASSWORD>"; // This has to be added because Sophos doesn't let you connect for a while after 4 consecutive unsuccessful attempts
 
-const username_to_find = "19102156";
-
+const username_to_find = "<USER>"; // Enter the username of the person whose password you want to find
+ 
 // TODO: Currently we use an array to store all the password. Use a TOML/JSON file to do this.
 const password_list: Array<string> = [
   "157030AR",
