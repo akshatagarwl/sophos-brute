@@ -1,4 +1,4 @@
-# Sophos Password Vulnerabilty Checker
+# Sophos Brute
 Disclaimer: This is just for education purpose and I do not intend to steal any information.
 
 This is was made in [Deno]. You need to install it in order to use it. This uses a modified version of [sophos-cli](https://github.com/ryzokuken/sophos-cli) (with an added logout option). The binary is shipped with the repository. Currently works for most first year students i.e having enrollment number `19*` or `9919*`
